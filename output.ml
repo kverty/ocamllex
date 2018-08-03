@@ -112,7 +112,7 @@ let output_entry sourcefile ic oc has_refill oci e =
 
 exception Table_overflow
 
-let output_lexdef sourcefile ic oc oci header rh tables entry_points trailer =
+let output_lexdef sourcefile ic oc oci header rh tables entry_points trailer generateMatcher =
   if not !Common.quiet_mode then
     Printf.printf "%d states, %d transitions, table size %d bytes\n"
       (Array.length tables.tbl_base)
@@ -146,4 +146,21 @@ let output_lexdef sourcefile ic oc oci header rh tables entry_points trailer =
         entries;
       output_string oc ";;\n\n";
   end;
+  if generateMatcher then
+  begin
+    output_string oc "class lexer (str :  string) =\n";
+    output_string oc "  object (self : 'self) inherit stream str as super\n\n";
+    List.iter
+      (fun entry ->
+         fprintf       oc "    method get%s : 'b . ('a -> 'self -> ('self, 'b, Reason.t) result) -> ('self, 'b, Reason.t) result =\n" (String.uppercase_ascii entry.auto_name);
+        output_string oc "    fun k ->\n";
+        output_string oc "      let lexbuf = self # lexbuf in\n";
+        output_string oc "      lexbuf.lex_curr_pos <- p;\n";
+        fprintf       oc "      let res = %s lexbuf in\n" entry.auto_name;
+        output_string oc "      k res {< p = lexbuf.lex_curr_pos >}\n\n";
+      )
+      entry_points;
+    output_string oc "end\n\n";
+  end;
+
   copy_chunk ic oc oci trailer false

@@ -19,6 +19,7 @@ val output_lexdef:
       Compact.lex_tables ->
       (string list, Syntax.location) Lexgen.automata_entry list ->
       Syntax.location ->
+      bool ->
       unit
 
 exception Table_overflow
