@@ -17,7 +17,7 @@ open Syntax
 let ml_automata = ref false
 let source_name = ref None
 let output_name = ref None
-let generateMatcher = ref false
+let generate_matcher = ref false
 
 let usage = "usage: ocamlex [options] sourcefile"
 
@@ -41,7 +41,7 @@ let specs =
    "-v",  Arg.Unit print_version_string, " Print version and exit";
    "-version",  Arg.Unit print_version_string, " Print version and exit";
    "-vnum",  Arg.Unit print_version_num, " Print version number and exit";
-   "-ostap",  Arg.Unit (fun () -> generateMatcher := true), "Output code contains Ostap.Matcher.stream implementation";
+   "-ostap",  Arg.Unit (fun () -> generate_matcher := true), " Generate Ostap.Matcher.stream implementation";
   ]
 
 let _ =
@@ -81,7 +81,7 @@ let main () =
     end else begin
        let tables = Compact.compact_tables transitions in
        Output.output_lexdef source_name ic oc tr
-         def.header def.refill_handler tables entries def.trailer !generateMatcher
+         def.header def.refill_handler tables entries def.trailer !generate_matcher
     end;
     close_in ic;
     close_out oc;
