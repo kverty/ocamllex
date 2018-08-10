@@ -112,7 +112,7 @@ let output_entry sourcefile ic oc has_refill oci e =
 
 exception Table_overflow
 
-let output_lexdef sourcefile ic oc oci header rh tables entry_points trailer generateMatcher =
+let output_lexdef sourcefile ic oc oci header rh tables entry_points trailer generate_matcher =
   if not !Common.quiet_mode then
     Printf.printf "%d states, %d transitions, table size %d bytes\n"
       (Array.length tables.tbl_base)
@@ -146,7 +146,7 @@ let output_lexdef sourcefile ic oc oci header rh tables entry_points trailer gen
         entries;
       output_string oc ";;\n\n";
   end;
-  if generateMatcher then
+  if generate_matcher then
   begin
     output_string oc "class lexer (str :  string) =\n";
     output_string oc "  object (self : 'self) inherit stream str as super\n\n";
